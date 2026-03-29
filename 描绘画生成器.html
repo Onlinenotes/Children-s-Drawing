@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>妙笔描绘 - 儿童描绘画在线生成器</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-cream: #FFF8F0;
+  --bg-warm: #FEF3E2;
+  --accent-coral: #FF6B6B;
+  --accent-orange: #FFA552;
+  --accent-yellow: #FFD93D;
+  --accent-green: #6BCB77;
+  --accent-blue: #4D96FF;
+  --accent-purple: #9B72CF;
+  --accent-pink: #FF8FAB;
+  --text-dark: #2D3436;
+  --text-mid: #636E72;
+  --text-light: #B2BEC3;
+  --card-bg: #FFFFFF;
+  --shadow-soft: 0 4px 20px rgba(0,0,0,0.06);
+  --shadow-hover: 0 8px 32px rgba(0,0,0,0.1);
+  --radius: 20px;
+  --radius-sm: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Noto Sans SC', sans-serif;
+  background: var(--bg-cream);
+  color: var(--text-dark);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* === ANIMATED BACKGROUND === */
+.bg-decor {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.bg-decor .blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.15;
+  animation: blobFloat 20s ease-in-out infinite;
+}
+.blob:nth-child(1) { width: 400px; height: 400px; background: var(--accent-coral); top: -100px; right: -100px; animation-delay: 0s; }
+.blob:nth-child(2) { width: 350px; height: 350px; background: var(--accent-blue); bottom: -80px; left: -80px; animation-delay: -7s; }
+.blob:nth-child(3) { width: 300px; height: 300px; background: var(--accent-yellow); top: 40%; left: 30%; animation-delay: -14s; }
+.blob:nth-child(4) { width: 250px; height: 250px; background: var(--accent-green); top: 20%; right: 20%; animation-delay: -10s; }
+
+@keyframes blobFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -40px) scale(1.05); }
+  50% { transform: translate(-20px, 30px) scale(0.95); }
+  75% { transform: translate(40px, 20px) scale(1.02); }
+}
+
+/* === HEADER === */
+.header {
+  position: relative;
+  z-index: 10;
+  padding: 24px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(20px);
+  background: rgba(255,248,240,0.7);
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.logo-icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, var(--accent-coral), var(--accent-orange));
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 4px 12px rgba(255,107,107,0.3);
+  animation: logoWiggle 3s ease-in-out infinite;
+}
+@keyframes logoWiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+.logo-text {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 26px;
+  background: linear-gradient(135deg, var(--accent-coral), var(--accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.logo-sub {
+  font-size: 12px;
+  color: var(--text-light);
+  letter-spacing: 2px;
+}
+.header-actions {
+  display: flex; gap: 10px;
+}
+.btn-header {
+  padding: 10px 20px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.3s;
+  display: flex; align-items: center; gap: 6px;
+}
+.btn-help {
+  background: var(--card-bg);
+  color: var(--text-mid);
+  border: 1px solid rgba(0,0,0,0.08);
+}
+.btn-help:hover { background: #f8f8f8; }
+
+/* === MAIN LAYOUT === */
+.main-container {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 40px 60px;
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 32px;
+  min-height: calc(100vh - 100px);
+}
+
+/* === LEFT PANEL === */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.panel-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: box-shadow 0.3s;
+}
+.panel-card:hover {
+  box-shadow: var(--shadow-hover);
+}
+.panel-title {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 18px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.panel-title .icon {
+  width: 32px; height: 32px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* Category Tabs */
+.category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.cat-tab {
+  padding: 8px 16px;
+  border-radius: 50px;
+  border: 2px solid transparent;
+  background: var(--bg-warm);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.25s;
+  color: var(--text-mid);
+  white-space: nowrap;
+}
+.cat-tab:hover { background: #FFE8CC; }
+.cat-tab.active {
+  background: var(--accent-orange);
+  color: #fff;
+  border-color: var(--accent-orange);
+  box-shadow: 0 3px 12px rgba(255,165,82,0.3);
+}
+
+/* Shape Grid */
+.shape-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.shape-grid::-webkit-scrollbar { width: 5px; }
+.shape-grid::-webkit-scrollbar-track { background: transparent; }
+.shape-grid::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
+
+.shape-item {
+  aspect-ratio: 1;
+  border-radius: var(--radius-sm);
+  border: 2px solid #f0f0f0;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.25s;
+  padding: 8px;
+  position: relative;
+}
+.shape-item:hover {
+  border-color: var(--accent-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(77,150,255,0.15);
+}
+.shape-item.selected {
+  border-color: var(--accent-coral);
+  background: #FFF5F5;
+  box-shadow: 0 4px 16px rgba(255,107,107,0.2);
+}
+.shape-item.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 4px; right: 6px;
+  font-size: 11px;
+  color: #fff;
+  background: var(--accent-coral);
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.shape-item svg {
+  width: 60%;
+  height: 60%;
+}
+.shape-item .shape-name {
+  font-size: 11px;
+  color: var(--text-mid);
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Selected Queue */
+.selected-queue {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 42px;
+  padding: 12px;
+  background: var(--bg-warm);
+  border-radius: var(--radius-sm);
+  border: 2px dashed #EEDCBF;
+  position: relative;
+}
+.selected-queue.empty::before {
+  content: '点击下方图形添加到这里 ↓';
+  color: var(--text-light);
+  font-size: 13px;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+.queue-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px 6px 6px;
+  background: #fff;
+  border-radius: 50px;
+  font-size: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  animation: chipIn 0.3s ease;
+  cursor: grab;
+  border: 1px solid #f0f0f0;
+}
+@keyframes chipIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.queue-chip svg { width: 24px; height: 24px; }
+.queue-chip .remove-chip {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: none;
+  background: #fee;
+  color: var(--accent-coral);
+  cursor: pointer;
+  font-size: 11px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  margin-left: 2px;
+}
+.queue-chip .remove-chip:hover {
+  background: var(--accent-coral);
+  color: #fff;
+}
+
+/* Settings */
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.setting-label {
+  font-size: 14px;
+  color: var(--text-mid);
+}
+.cols-selector {
+  display: flex;
+  gap: 6px;
+}
+.col-btn {
+  width: 44px; height: 36px;
+  border-radius: 10px;
+  border: 2px solid #eee;
+  background: #fff;
+  cursor: pointer;
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: 600;
+  transition: all 0.2s;
+  color: var(--text-mid);
+}
+.col-btn:hover { border-color: var(--accent-blue); }
+.col-btn.active {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(77,150,255,0.3);
+}
+
+.setting-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  border: 2px solid #f0f0f0;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  background: var(--bg-cream);
+}
+.setting-input:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+}
+.setting-input::placeholder {
+  color: var(--text-light);
+}
+
+.line-style-group {
+  display: flex;
+  gap: 8px;
+}
+.line-style-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid #eee;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.2s;
+  text-align: center;
+  color: var(--text-mid);
+}
+.line-style-btn:hover { border-color: var(--accent-purple); }
+.line-style-btn.active {
+  background: var(--accent-purple);
+  border-color: var(--accent-purple);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(155,114,207,0.3);
+}
+
+/* Action Buttons */
+.action-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+.btn-primary {
+  flex: 1;
+  padding: 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  font-family: 'ZCOOL KuaiLe', cursive;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-generate {
+  background: linear-gradient(135deg, var(--accent-coral), var(--accent-orange));
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(255,107,107,0.3);
+}
+.btn-generate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(255,107,107,0.4);
+}
+.btn-generate:active { transform: translateY(0); }
+
+.btn-print {
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(77,150,255,0.3);
+}
+.btn-print:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(77,150,255,0.4);
+}
+
+.btn-clear {
+  width: 52px;
+  background: #fff;
+  border: 2px solid #eee;
+  color: var(--text-light);
+  border-radius: var(--radius-sm);
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-clear:hover {
+  border-color: var(--accent-coral);
+  color: var(--accent-coral);
+}
+
+/* === PREVIEW PANEL === */
+.preview-area {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(0,0,0,0.04);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.preview-toolbar {
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f5f5f5;
+}
+.preview-toolbar-left {
+  display: flex; align-items: center; gap: 12px;
+}
+.preview-title {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 16px;
+  color: var(--text-mid);
+}
+.page-nav {
+  display: flex; align-items: center; gap: 8px;
+}
+.page-btn {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  color: var(--text-mid);
+}
+.page-btn:hover { background: #f8f8f8; }
+.page-btn:disabled { opacity: 0.3; cursor: default; }
+.page-info { font-size: 13px; color: var(--text-light); }
+
+.preview-content {
+  flex: 1;
+  padding: 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  background: #f9f9f9;
+}
+.preview-content::-webkit-scrollbar { width: 6px; }
+.preview-content::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+
+/* Preview Page */
+.preview-page {
+  width: 100%;
+  max-width: 680px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+  padding: 40px 36px;
+  min-height: 900px;
+}
+.preview-page-header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px dashed #eee;
+}
+.preview-page-header h2 {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 22px;
+  color: var(--text-dark);
+}
+.preview-page-header .subtitle {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+.preview-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+  align-items: stretch;
+}
+.preview-cell {
+  flex: 1;
+  aspect-ratio: 1;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: #fff;
+  position: relative;
+}
+.preview-cell svg {
+  width: 100%;
+  height: 100%;
+}
+.preview-cell .cell-label {
+  position: absolute;
+  bottom: 4px;
+  font-size: 10px;
+  color: var(--text-light);
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 500px;
+  text-align: center;
+  color: var(--text-light);
+}
+.empty-state .empty-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  opacity: 0.4;
+  animation: emptyFloat 3s ease-in-out infinite;
+}
+@keyframes emptyFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.empty-state h3 {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: var(--text-mid);
+}
+.empty-state p { font-size: 14px; }
+
+/* === DIFFICULTY BADGE === */
+.diff-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 50px;
+  font-size: 10px;
+  font-weight: 500;
+  margin-left: 6px;
+}
+.diff-easy { background: #E8F8E8; color: #2E7D32; }
+.diff-medium { background: #FFF3E0; color: #E65100; }
+.diff-hard { background: #FCE4EC; color: #C62828; }
+
+/* === PRINT STYLES === */
+@media print {
+  body { background: #fff !important; }
+  .header, .panel, .preview-toolbar, .bg-decor, .preview-area { display: none !important; }
+  .print-only {
+    display: block !important;
+    padding: 0;
+    margin: 0;
+  }
+  .print-page {
+    page-break-after: always;
+    padding: 15mm;
+  }
+  .print-page:last-child { page-break-after: auto; }
+  .print-header {
+    text-align: center;
+    margin-bottom: 8mm;
+    padding-bottom: 4mm;
+    border-bottom: 1px dashed #ccc;
+    font-family: 'ZCOOL KuaiLe', cursive, KaiTi, STKaiti, serif;
+    font-size: 18pt;
+  }
+  .print-row {
+    display: flex;
+    gap: 6mm;
+    margin-bottom: 4mm;
+  }
+  .print-cell {
+    flex: 1;
+    aspect-ratio: 1;
+    border: 0.5pt solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3mm;
+  }
+  .print-cell svg { width: 100%; height: 100%; }
+}
+
+.print-only { display: none; }
+
+/* === RESPONSIVE === */
+@media (max-width: 1024px) {
+  .main-container {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+  .header { padding: 16px 20px; }
+  .preview-content { padding: 16px; }
+}
+
+@media (max-width: 640px) {
+  .logo-text { font-size: 20px; }
+  .shape-grid { grid-template-columns: repeat(3, 1fr); }
+  .preview-page { padding: 20px 16px; }
+  .header-actions { display: none; }
+}
+
+/* === TOAST === */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--text-dark);
+  color: #fff;
+  padding: 14px 28px;
+  border-radius: 50px;
+  font-size: 14px;
+  z-index: 1000;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* === Stats Banner === */
+.stats-bar {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(255,165,82,0.08), rgba(77,150,255,0.08));
+  border-radius: var(--radius-sm);
+  margin-bottom: 4px;
+}
+.stat-item {
+  flex: 1;
+  text-align: center;
+}
+.stat-num {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 22px;
+  color: var(--accent-coral);
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--text-light);
+}
+</style>
+</head>
+<body>
+
+<div class="bg-decor">
+  <div class="blob"></div>
+  <div class="blob"></div>
+  <div class="blob"></div>
+  <div class="blob"></div>
+</div>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">🎨</div>
+    <div>
+      <div class="logo-text">妙笔描绘</div>
+      <div class="logo-sub">儿童描绘画在线生成器</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="btn-header btn-help" onclick="showToast('如有问题请联系我们：support@miaobimh.com')">💡 使用帮助</button>
+  </div>
+</header>
+
+<main class="main-container">
+  <!-- LEFT PANEL -->
+  <div class="panel">
+    <!-- Stats -->
+    <div class="panel-card">
+      <div class="stats-bar">
+        <div class="stat-item"><div class="stat-num" id="totalShapes">0</div><div class="stat-label">可选图形</div></div>
+        <div class="stat-item"><div class="stat-num" id="selectedCount">0</div><div class="stat-label">已选图形</div></div>
+        <div class="stat-item"><div class="stat-num" id="pageCount">0</div><div class="stat-label">预计页数</div></div>
+      </div>
+    </div>
+
+    <!-- Selected Queue -->
+    <div class="panel-card">
+      <div class="panel-title">
+        <span class="icon" style="background:#FFF0F0;color:var(--accent-coral);">📋</span>
+        已选图形序列
+      </div>
+      <div class="selected-queue empty" id="selectedQueue"></div>
+    </div>
+
+    <!-- Shape Picker -->
+    <div class="panel-card" style="flex:1; min-height:0; display:flex; flex-direction:column;">
+      <div class="panel-title">
+        <span class="icon" style="background:#F0F4FF;color:var(--accent-blue);">🖼️</span>
+        选择图形
+      </div>
+      <div class="category-tabs" id="categoryTabs"></div>
+      <div class="shape-grid" id="shapeGrid" style="flex:1;"></div>
+    </div>
+
+    <!-- Settings -->
+    <div class="panel-card">
+      <div class="panel-title">
+        <span class="icon" style="background:#F0FFF0;color:var(--accent-green);">⚙️</span>
+        打印设置
+      </div>
+      <div class="setting-row">
+        <span class="setting-label">每行图形数</span>
+        <div class="cols-selector">
+          <button class="col-btn" data-cols="1" onclick="setCols(1)">1</button>
+          <button class="col-btn active" data-cols="2" onclick="setCols(2)">2</button>
+          <button class="col-btn" data-cols="3" onclick="setCols(3)">3</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label">描绘线条</span>
+        <div class="line-style-group">
+          <button class="line-style-btn active" data-style="dashed" onclick="setLineStyle('dashed')">虚线</button>
+          <button class="line-style-btn" data-style="light" onclick="setLineStyle('light')">浅灰</button>
+          <button class="line-style-btn" data-style="dots" onclick="setLineStyle('dots')">点阵</button>
+        </div>
+      </div>
+      <div style="margin-bottom:14px;">
+        <span class="setting-label">自定义页头</span>
+        <input type="text" class="setting-input" id="customHeader" placeholder="例如：第三周描绘练习" oninput="updatePreview()" style="margin-top:8px;">
+      </div>
+      <div class="action-group">
+        <button class="btn-primary btn-generate" onclick="generatePreview()">✨ 生成预览</button>
+        <button class="btn-primary btn-print" onclick="printPages()">🖨️ 打印</button>
+        <button class="btn-clear" onclick="clearAll()" title="清空所有">🗑</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PREVIEW -->
+  <div class="preview-area">
+    <div class="preview-toolbar">
+      <div class="preview-toolbar-left">
+        <span class="preview-title">📄 实时预览</span>
+      </div>
+      <div class="page-nav">
+        <button class="page-btn" id="prevPage" onclick="changePage(-1)" disabled>◀</button>
+        <span class="page-info" id="pageInfo">第 0/0 页</span>
+        <button class="page-btn" id="nextPage" onclick="changePage(1)" disabled>▶</button>
+      </div>
+    </div>
+    <div class="preview-content" id="previewContent">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🎨</div>
+        <h3>从左侧选择图形开始创作</h3>
+        <p>选好图形后点击"生成预览"即可查看效果</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Print Container -->
+<div class="print-only" id="printContainer"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== SVG SHAPE LIBRARY =====
+const SHAPES = [
+  // --- 基础形状 ---
+  { id:'circle', name:'圆形', cat:'基础', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/></svg>` },
+  { id:'square', name:'正方形', cat:'基础', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><rect x="15" y="15" width="70" height="70" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/></svg>` },
+  { id:'triangle', name:'三角形', cat:'基础', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><polygon points="50,12 90,88 10,88" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/></svg>` },
+  { id:'star', name:'五角星', cat:'基础', diff:'medium',
+    svg:`<svg viewBox="0 0 100 100"><polygon points="50,8 61,38 93,38 67,56 76,88 50,70 24,88 33,56 7,38 39,38" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/></svg>` },
+  { id:'heart', name:'爱心', cat:'基础', diff:'medium',
+    svg:`<svg viewBox="0 0 100 100"><path d="M50 88 C20 65, 5 45, 15 28 C25 12, 42 14, 50 30 C58 14, 75 12, 85 28 C95 45, 80 65, 50 88Z" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/></svg>` },
+  { id:'diamond', name:'菱形', cat:'基础', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><polygon points="50,8 90,50 50,92 10,50" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/></svg>` },
+  { id:'oval', name:'椭圆', cat:'基础', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="42" ry="28" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/></svg>` },
+  { id:'crescent', name:'月牙', cat:'基础', diff:'medium',
+    svg:`<svg viewBox="0 0 100 100"><path d="M60 10 A40 40 0 1 1 60 90 A28 28 0 1 0 60 10Z" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/></svg>` },
+
+  // --- 动物 ---
+  { id:'fish', name:'小鱼', cat:'动物', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><ellipse cx="45" cy="50" rx="30" ry="20" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><polygon points="75,50 95,35 95,65" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="32" cy="45" r="3" fill="#333"/></svg>` },
+  { id:'butterfly', name:'蝴蝶', cat:'动物', diff:'medium',
+    svg:`<svg viewBox="0 0 100 100"><ellipse cx="35" cy="38" rx="20" ry="16" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><ellipse cx="65" cy="38" rx="20" ry="16" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><ellipse cx="38" cy="62" rx="14" ry="18" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><ellipse cx="62" cy="62" rx="14" ry="18" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="50" y1="25" x2="50" y2="82" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="50" y1="25" x2="40" y2="12" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="50" y1="25" x2="60" y2="12" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/></svg>` },
+  { id:'cat', name:'小猫', cat:'动物', diff:'medium',
+    svg:`<svg viewBox="0 0 100 100"><circle cx="50" cy="52" r="26" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><polygon points="30,32 24,10 40,26" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><polygon points="70,32 76,10 60,26" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="40" cy="48" r="3" fill="#333"/><circle cx="60" cy="48" r="3" fill="#333"/><ellipse cx="50" cy="56" rx="4" ry="3" fill="none" stroke="#333" stroke-width="1.5"/><line x1="20" y1="52" x2="34" y2="50" stroke="#333" stroke-width="1" stroke-dasharray="3 2"/><line x1="20" y1="56" x2="34" y2="55" stroke="#333" stroke-width="1" stroke-dasharray="3 2"/><line x1="66" y1="50" x2="80" y2="52" stroke="#333" stroke-width="1" stroke-dasharray="3 2"/><line x1="66" y1="55" x2="80" y2="56" stroke="#333" stroke-width="1" stroke-dasharray="3 2"/><path d="M44 64 Q50 72 56 64" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/></svg>` },
+  { id:'rabbit', name:'兔子', cat:'动物', diff:'medium',
+    svg:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="60" rx="24" ry="22" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><ellipse cx="38" cy="24" rx="8" ry="22" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><ellipse cx="62" cy="24" rx="8" ry="22" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="42" cy="55" r="3" fill="#333"/><circle cx="58" cy="55" r="3" fill="#333"/><ellipse cx="50" cy="63" rx="4" ry="2.5" fill="none" stroke="#333" stroke-width="1.5"/><line x1="50" y1="65" x2="50" y2="70" stroke="#333" stroke-width="1"/><circle cx="50" cy="90" r="6" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/></svg>` },
+  { id:'bird', name:'小鸟', cat:'动物', diff:'medium',
+    svg:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="48" rx="28" ry="20" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="36" cy="42" r="8" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="34" cy="40" r="2.5" fill="#333"/><polygon points="22,42 10,38 22,46" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M60 60 Q55 80 45 85" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M65 42 Q80 30 92 36" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="42" y1="68" x2="38" y2="90" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="54" y1="67" x2="52" y2="90" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/></svg>` },
+  { id:'snail', name:'蜗牛', cat:'动物', diff:'hard',
+    svg:`<svg viewBox="0 0 100 100"><path d="M25 70 Q10 70 10 58 Q10 36 35 32 Q60 28 68 50 Q74 65 55 70" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="50" cy="50" r="18" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="50" cy="50" r="8" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M55 70 L90 72 Q95 72 92 68" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="80" y1="72" x2="76" y2="58" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="85" y1="72" x2="84" y2="56" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><circle cx="75" cy="55" r="2" fill="#333"/><circle cx="83" cy="53" r="2" fill="#333"/></svg>` },
+  { id:'turtle', name:'乌龟', cat:'动物', diff:'medium',
+    svg:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="30" ry="22" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M30 40 Q28 36 22 34 Q16 32 12 36" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="15" cy="33" r="2" fill="#333"/><ellipse cx="28" cy="68" rx="8" ry="5" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><ellipse cx="72" cy="68" rx="8" ry="5" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="50" y1="30" x2="50" y2="72" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="30" y1="50" x2="70" y2="50" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M78 48 L88 52" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/></svg>` },
+  { id:'ladybug', name:'瓢虫', cat:'动物', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><circle cx="50" cy="55" r="30" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="50" y1="25" x2="50" y2="85" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><circle cx="50" cy="30" r="12" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="38" cy="48" r="4" fill="none" stroke="#333" stroke-width="1.5"/><circle cx="62" cy="48" r="4" fill="none" stroke="#333" stroke-width="1.5"/><circle cx="40" cy="68" r="4" fill="none" stroke="#333" stroke-width="1.5"/><circle cx="60" cy="68" r="4" fill="none" stroke="#333" stroke-width="1.5"/><line x1="42" y1="22" x2="34" y2="10" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="58" y1="22" x2="66" y2="10" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><circle cx="33" cy="8" r="2" fill="#333"/><circle cx="67" cy="8" r="2" fill="#333"/></svg>` },
+
+  // --- 植物 ---
+  { id:'flower1', name:'小花', cat:'植物', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><circle cx="50" cy="40" r="10" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="38" cy="30" r="10" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="62" cy="30" r="10" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="38" cy="48" r="10" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="62" cy="48" r="10" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="50" y1="55" x2="50" y2="92" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M50 70 Q36 62 30 68" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M50 78 Q64 72 70 76" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/></svg>` },
+  { id:'tulip', name:'郁金香', cat:'植物', diff:'medium',
+    svg:`<svg viewBox="0 0 100 100"><path d="M50 35 Q40 10 28 20 Q20 28 35 40" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M50 35 Q60 10 72 20 Q80 28 65 40" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M35 40 Q50 55 65 40" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M40 35 Q50 50 60 35" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="50" y1="48" x2="50" y2="90" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M50 68 Q32 60 28 68" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M50 76 Q68 70 72 76" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/></svg>` },
+  { id:'tree', name:'大树', cat:'植物', diff:'medium',
+    svg:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="34" rx="32" ry="26" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><rect x="42" y="58" width="16" height="34" rx="2" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M42 76 Q30 78 24 84 L24 92" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M58 76 Q70 78 76 84 L76 92" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/></svg>` },
+  { id:'leaf', name:'树叶', cat:'植物', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><path d="M50 10 Q80 30 75 60 Q70 85 50 92 Q30 85 25 60 Q20 30 50 10Z" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="50" y1="15" x2="50" y2="92" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M50 35 Q38 38 30 45" fill="none" stroke="#333" stroke-width="1" stroke-dasharray="3 2"/><path d="M50 50 Q62 53 70 58" fill="none" stroke="#333" stroke-width="1" stroke-dasharray="3 2"/><path d="M50 65 Q40 68 32 72" fill="none" stroke="#333" stroke-width="1" stroke-dasharray="3 2"/></svg>` },
+  { id:'mushroom', name:'蘑菇', cat:'植物', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><path d="M15 52 Q15 15 50 15 Q85 15 85 52Z" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><rect x="38" y="52" width="24" height="38" rx="4" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="40" cy="32" r="5" fill="none" stroke="#333" stroke-width="1.5"/><circle cx="60" cy="36" r="6" fill="none" stroke="#333" stroke-width="1.5"/><circle cx="50" cy="24" r="4" fill="none" stroke="#333" stroke-width="1.5"/></svg>` },
+  { id:'cactus', name:'仙人掌', cat:'植物', diff:'medium',
+    svg:`<svg viewBox="0 0 100 100"><rect x="38" y="15" width="24" height="72" rx="12" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M38 50 Q20 48 18 38 Q16 26 28 28 Q32 28 32 34 L38 40" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M62 40 Q72 38 74 30 Q76 20 82 22 Q88 24 84 36 Q82 42 72 44 L62 45" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="30" y1="88" x2="70" y2="88" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/></svg>` },
+
+  // --- 交通 ---
+  { id:'car', name:'小汽车', cat:'交通', diff:'medium',
+    svg:`<svg viewBox="0 0 100 100"><path d="M10 58 L18 58 L28 36 L72 36 L82 58 L90 58 L90 70 L10 70Z" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="28" cy="70" r="10" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="72" cy="70" r="10" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><rect x="34" y="42" width="14" height="12" rx="2" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><rect x="54" y="42" width="14" height="12" rx="2" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/></svg>` },
+  { id:'boat', name:'小船', cat:'交通', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><path d="M12 60 L25 80 L75 80 L88 60Z" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="50" y1="20" x2="50" y2="80" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><polygon points="50,20 80,50 50,50" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M5 86 Q20 82 35 86 Q50 90 65 86 Q80 82 95 86" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/></svg>` },
+  { id:'rocket', name:'火箭', cat:'交通', diff:'hard',
+    svg:`<svg viewBox="0 0 100 100"><path d="M50 8 Q60 20 62 50 L58 70 L42 70 L38 50 Q40 20 50 8Z" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M38 50 Q24 54 22 66 L38 60" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M62 50 Q76 54 78 66 L62 60" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="50" cy="40" r="6" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M44 70 Q42 82 38 90" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M50 70 Q50 84 50 92" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M56 70 Q58 82 62 90" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/></svg>` },
+  { id:'airplane', name:'飞机', cat:'交通', diff:'hard',
+    svg:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="48" rx="8" ry="30" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M42 50 L8 58 L8 52 L42 42" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M58 50 L92 58 L92 52 L58 42" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M44 72 L34 82 L34 78 L44 70" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M56 72 L66 82 L66 78 L56 70" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/></svg>` },
+  { id:'bike', name:'自行车', cat:'交通', diff:'hard',
+    svg:`<svg viewBox="0 0 100 100"><circle cx="25" cy="62" r="18" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="75" cy="62" r="18" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="25" y1="62" x2="50" y2="38" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="50" y1="38" x2="75" y2="62" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="50" y1="38" x2="42" y2="62" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="42" y1="62" x2="75" y2="62" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="50" y1="38" x2="50" y2="28" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="44" y1="28" x2="56" y2="28" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="25" cy="62" r="3" fill="#333"/><circle cx="75" cy="62" r="3" fill="#333"/></svg>` },
+
+  // --- 生活 ---
+  { id:'house', name:'房子', cat:'生活', diff:'medium',
+    svg:`<svg viewBox="0 0 100 100"><polygon points="50,12 90,48 10,48" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><rect x="18" y="48" width="64" height="42" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><rect x="40" y="64" width="18" height="26" rx="2" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><rect x="24" y="56" width="12" height="12" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><rect x="64" y="56" width="12" height="12" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="30" y1="56" x2="30" y2="68" stroke="#333" stroke-width="1"/><line x1="24" y1="62" x2="36" y2="62" stroke="#333" stroke-width="1"/><circle cx="55" cy="78" r="2" fill="#333"/></svg>` },
+  { id:'cup', name:'杯子', cat:'生活', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><path d="M25 25 L30 85 L70 85 L75 25Z" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M75 38 Q92 38 92 52 Q92 66 75 66" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><ellipse cx="50" cy="25" rx="25" ry="6" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M35 12 Q38 6 42 12" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M48 8 Q50 2 54 8" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M58 12 Q62 6 65 12" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/></svg>` },
+  { id:'umbrella', name:'雨伞', cat:'生活', diff:'medium',
+    svg:`<svg viewBox="0 0 100 100"><path d="M10 48 Q10 14 50 14 Q90 14 90 48" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="50" y1="14" x2="50" y2="82" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M50 82 Q50 90 58 90 Q64 90 64 84" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M10 48 Q20 40 30 48 Q40 40 50 48 Q60 40 70 48 Q80 40 90 48" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/></svg>` },
+  { id:'balloon', name:'气球', cat:'生活', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="38" rx="24" ry="30" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><polygon points="44,66 56,66 50,74" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M50 74 Q44 80 52 86 Q48 90 50 95" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/></svg>` },
+  { id:'bell', name:'铃铛', cat:'生活', diff:'medium',
+    svg:`<svg viewBox="0 0 100 100"><path d="M22 62 Q22 28 50 22 Q78 28 78 62 L85 72 L15 72Z" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="50" cy="16" r="6" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="50" cy="80" r="8" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/></svg>` },
+  { id:'pencil', name:'铅笔', cat:'生活', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><rect x="38" y="14" width="24" height="58" rx="2" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><polygon points="38,72 62,72 50,92" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="38" y1="72" x2="62" y2="72" stroke="#333" stroke-width="1.5"/><rect x="38" y="14" width="24" height="10" rx="2" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/></svg>` },
+
+  // --- 天气/自然 ---
+  { id:'sun', name:'太阳', cat:'自然', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="20" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="50" y1="8" x2="50" y2="22" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="50" y1="78" x2="50" y2="92" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="8" y1="50" x2="22" y2="50" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="78" y1="50" x2="92" y2="50" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="20" y1="20" x2="32" y2="32" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="68" y1="68" x2="80" y2="80" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="80" y1="20" x2="68" y2="32" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="32" y1="68" x2="20" y2="80" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/></svg>` },
+  { id:'cloud', name:'云朵', cat:'自然', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><path d="M25 65 Q10 65 10 52 Q10 40 22 38 Q22 22 40 22 Q52 22 56 34 Q60 28 70 30 Q82 32 82 46 Q92 46 92 56 Q92 65 80 65Z" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/></svg>` },
+  { id:'rainbow', name:'彩虹', cat:'自然', diff:'medium',
+    svg:`<svg viewBox="0 0 100 100"><path d="M10 80 Q10 20 50 20 Q90 20 90 80" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M20 80 Q20 32 50 32 Q80 32 80 80" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M30 80 Q30 44 50 44 Q70 44 70 80" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="14" cy="82" r="5" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><circle cx="86" cy="82" r="5" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/></svg>` },
+  { id:'snowflake', name:'雪花', cat:'自然', diff:'hard',
+    svg:`<svg viewBox="0 0 100 100"><line x1="50" y1="10" x2="50" y2="90" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="15" y1="30" x2="85" y2="70" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="85" y1="30" x2="15" y2="70" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="50" y1="22" x2="42" y2="16" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="50" y1="22" x2="58" y2="16" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="50" y1="78" x2="42" y2="84" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="50" y1="78" x2="58" y2="84" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="26" y1="36" x2="20" y2="42" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="74" y1="64" x2="80" y2="58" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="74" y1="36" x2="80" y2="42" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="26" y1="64" x2="20" y2="58" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/></svg>` },
+  { id:'lightning', name:'闪电', cat:'自然', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><polygon points="55,8 30,50 48,50 38,92 72,42 52,42 65,8" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/></svg>` },
+
+  // --- 食物 ---
+  { id:'apple', name:'苹果', cat:'食物', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><path d="M50 28 Q30 20 18 38 Q6 58 20 76 Q34 92 50 86 Q66 92 80 76 Q94 58 82 38 Q70 20 50 28Z" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M50 28 Q52 14 60 10" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M54 22 Q62 18 68 22" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/></svg>` },
+  { id:'icecream', name:'冰淇淋', cat:'食物', diff:'medium',
+    svg:`<svg viewBox="0 0 100 100"><circle cx="50" cy="32" r="22" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><polygon points="30,42 70,42 50,92" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="30" y1="42" x2="70" y2="42" stroke="#333" stroke-width="1.5"/><path d="M36 56 L64 56" stroke="#333" stroke-width="1" stroke-dasharray="3 2"/><path d="M40 66 L60 66" stroke="#333" stroke-width="1" stroke-dasharray="3 2"/></svg>` },
+  { id:'cake', name:'蛋糕', cat:'食物', diff:'hard',
+    svg:`<svg viewBox="0 0 100 100"><rect x="18" y="50" width="64" height="36" rx="6" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M18 50 Q18 38 30 38 L70 38 Q82 38 82 50" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M18 68 Q34 62 50 68 Q66 74 82 68" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><rect x="46" y="24" width="8" height="14" rx="1" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M48 24 Q50 14 52 24" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><circle cx="50" cy="12" r="3" fill="none" stroke="#333" stroke-width="1"/></svg>` },
+  { id:'watermelon', name:'西瓜', cat:'食物', diff:'easy',
+    svg:`<svg viewBox="0 0 100 100"><path d="M12 55 Q12 15 50 15 Q88 15 88 55Z" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><path d="M18 55 Q18 22 50 22 Q82 22 82 55Z" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="12" y1="55" x2="88" y2="55" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="35" cy="42" r="2.5" fill="#333"/><circle cx="50" cy="38" r="2.5" fill="#333"/><circle cx="65" cy="42" r="2.5" fill="#333"/><circle cx="42" cy="50" r="2" fill="#333"/><circle cx="58" cy="50" r="2" fill="#333"/></svg>` },
+];
+
+// ===== STATE =====
+let selectedShapes = [];
+let currentCat = '全部';
+let cols = 2;
+let lineStyle = 'dashed';
+let pages = [];
+let currentPage = 0;
+
+// ===== INIT =====
+function init() {
+  renderCategories();
+  renderShapeGrid();
+  updateStats();
+}
+
+function getCategories() {
+  const cats = new Set(SHAPES.map(s => s.cat));
+  return ['全部', ...cats];
+}
+
+function renderCategories() {
+  const container = document.getElementById('categoryTabs');
+  const cats = getCategories();
+  container.innerHTML = cats.map(c =>
+    `<button class="cat-tab ${c === currentCat ? 'active' : ''}" onclick="selectCat('${c}')">${c}</button>`
+  ).join('');
+}
+
+function selectCat(cat) {
+  currentCat = cat;
+  renderCategories();
+  renderShapeGrid();
+}
+
+function renderShapeGrid() {
+  const grid = document.getElementById('shapeGrid');
+  const filtered = currentCat === '全部' ? SHAPES : SHAPES.filter(s => s.cat === currentCat);
+  const diffLabels = { easy: '简单', medium: '中等', hard: '较难' };
+  const diffClass = { easy: 'diff-easy', medium: 'diff-medium', hard: 'diff-hard' };
+
+  grid.innerHTML = filtered.map(s => {
+    const isSelected = selectedShapes.some(ss => ss.id === s.id && !ss._unique) || false;
+    return `<div class="shape-item ${isSelected ? 'selected' : ''}" onclick="toggleShape('${s.id}')" title="${s.name}">
+      ${s.svg}
+      <span class="shape-name">${s.name}<span class="diff-badge ${diffClass[s.diff]}">${diffLabels[s.diff]}</span></span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('totalShapes').textContent = SHAPES.length;
+}
+
+function toggleShape(id) {
+  const shape = SHAPES.find(s => s.id === id);
+  if (!shape) return;
+  // Always add (allow duplicates for multiple copies)
+  selectedShapes.push({ ...shape, _uid: Date.now() + Math.random() });
+  renderQueue();
+  updateStats();
+  updatePreview();
+}
+
+function removeFromQueue(uid) {
+  selectedShapes = selectedShapes.filter(s => s._uid !== uid);
+  renderQueue();
+  renderShapeGrid();
+  updateStats();
+  updatePreview();
+}
+
+function renderQueue() {
+  const queue = document.getElementById('selectedQueue');
+  if (selectedShapes.length === 0) {
+    queue.innerHTML = '';
+    queue.classList.add('empty');
+    return;
+  }
+  queue.classList.remove('empty');
+  queue.innerHTML = selectedShapes.map(s =>
+    `<div class="queue-chip">
+      <span style="display:inline-flex;width:24px;height:24px;">${s.svg}</span>
+      <span>${s.name}</span>
+      <button class="remove-chip" onclick="removeFromQueue(${s._uid})">×</button>
+    </div>`
+  ).join('');
+}
+
+function setCols(n) {
+  cols = n;
+  document.querySelectorAll('.col-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.cols) === n);
+  });
+  updateStats();
+  updatePreview();
+}
+
+function setLineStyle(style) {
+  lineStyle = style;
+  document.querySelectorAll('.line-style-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.style === style);
+  });
+  updatePreview();
+}
+
+function getStrokeAttrs() {
+  switch(lineStyle) {
+    case 'dashed': return 'stroke="#666" stroke-width="2" stroke-dasharray="4 3"';
+    case 'light': return 'stroke="#ccc" stroke-width="2"';
+    case 'dots': return 'stroke="#999" stroke-width="2" stroke-dasharray="1 4" stroke-linecap="round"';
+    default: return 'stroke="#666" stroke-width="2" stroke-dasharray="4 3"';
+  }
+}
+
+function applyLineStyle(svgStr) {
+  const attrs = getStrokeAttrs();
+  // Replace stroke attributes in the SVG
+  let result = svgStr;
+  // Replace dashed strokes
+  result = result.replace(/stroke="#333" stroke-width="2" stroke-dasharray="4 3"/g, attrs);
+  // Replace secondary strokes
+  const attrs2 = attrs.replace('stroke-width="2"', 'stroke-width="1.5"');
+  result = result.replace(/stroke="#333" stroke-width="1\.5" stroke-dasharray="3 2"/g, attrs2);
+  result = result.replace(/stroke="#333" stroke-width="1\.5"/g, attrs2);
+  // Keep fills for solid dots
+  const lightStroke = lineStyle === 'light' ? '#ccc' : lineStyle === 'dots' ? '#999' : '#666';
+  result = result.replace(/fill="#333"/g, `fill="${lightStroke}"`);
+  result = result.replace(/stroke="#333" stroke-width="1"/g, `stroke="${lightStroke}" stroke-width="1"`);
+  result = result.replace(/stroke="#333"/g, `stroke="${lightStroke}"`);
+  return result;
+}
+
+function updateStats() {
+  document.getElementById('selectedCount').textContent = selectedShapes.length;
+  const rowsPerPage = cols === 1 ? 5 : cols === 2 ? 4 : 3;
+  const totalRows = Math.ceil(selectedShapes.length / cols);
+  const pg = Math.ceil(totalRows / rowsPerPage) || 0;
+  document.getElementById('pageCount').textContent = pg;
+}
+
+function generatePreview() {
+  if (selectedShapes.length === 0) {
+    showToast('请先选择至少一个图形');
+    return;
+  }
+
+  const header = document.getElementById('customHeader').value || '描绘画练习';
+  const rowsPerPage = cols === 1 ? 5 : cols === 2 ? 4 : 3;
+
+  // Build rows
+  const rows = [];
+  for (let i = 0; i < selectedShapes.length; i += cols) {
+    const row = selectedShapes.slice(i, i + cols);
+    rows.push(row);
+  }
+
+  // Build pages
+  pages = [];
+  for (let i = 0; i < rows.length; i += rowsPerPage) {
+    pages.push(rows.slice(i, i + rowsPerPage));
+  }
+
+  currentPage = 0;
+  renderPreviewPage();
+  showToast(`已生成 ${pages.length} 页预览`);
+}
+
+function updatePreview() {
+  if (pages.length > 0) {
+    generatePreview();
+  }
+}
+
+function renderPreviewPage() {
+  const container = document.getElementById('previewContent');
+  const emptyState = document.getElementById('emptyState');
+
+  if (pages.length === 0) {
+    container.innerHTML = '';
+    container.appendChild(emptyState);
+    emptyState.style.display = 'flex';
+    updatePageNav();
+    return;
+  }
+
+  const header = document.getElementById('customHeader').value || '描绘画练习';
+  const page = pages[currentPage];
+
+  let html = `<div class="preview-page">
+    <div class="preview-page-header">
+      <h2>${header}</h2>
+      <div class="subtitle">姓名：________　日期：________　第 ${currentPage + 1}/${pages.length} 页</div>
+    </div>`;
+
+  page.forEach(row => {
+    html += '<div class="preview-row">';
+    for (let i = 0; i < cols; i++) {
+      if (row[i]) {
+        const styledSvg = applyLineStyle(row[i].svg);
+        html += `<div class="preview-cell">${styledSvg}<span class="cell-label">${row[i].name}</span></div>`;
+      } else {
+        html += `<div class="preview-cell" style="border-style:dashed;border-color:#eee;"></div>`;
+      }
+    }
+    html += '</div>';
+  });
+
+  html += '</div>';
+  container.innerHTML = html;
+  updatePageNav();
+}
+
+function updatePageNav() {
+  document.getElementById('pageInfo').textContent = pages.length > 0
+    ? `第 ${currentPage + 1}/${pages.length} 页` : '第 0/0 页';
+  document.getElementById('prevPage').disabled = currentPage <= 0;
+  document.getElementById('nextPage').disabled = currentPage >= pages.length - 1;
+}
+
+function changePage(dir) {
+  currentPage = Math.max(0, Math.min(pages.length - 1, currentPage + dir));
+  renderPreviewPage();
+}
+
+function clearAll() {
+  selectedShapes = [];
+  pages = [];
+  currentPage = 0;
+  renderQueue();
+  renderShapeGrid();
+  updateStats();
+  const container = document.getElementById('previewContent');
+  container.innerHTML = `<div class="empty-state" id="emptyState">
+    <div class="empty-icon">🎨</div>
+    <h3>从左侧选择图形开始创作</h3>
+    <p>选好图形后点击"生成预览"即可查看效果</p>
+  </div>`;
+  updatePageNav();
+}
+
+function printPages() {
+  if (pages.length === 0) {
+    showToast('请先生成预览');
+    return;
+  }
+
+  const header = document.getElementById('customHeader').value || '描绘画练习';
+  const printContainer = document.getElementById('printContainer');
+  let html = '';
+
+  pages.forEach((page, pi) => {
+    html += `<div class="print-page">
+      <div class="print-header">${header}<br><span style="font-size:11pt;color:#999;">姓名：________　日期：________　第 ${pi+1}/${pages.length} 页</span></div>`;
+    page.forEach(row => {
+      html += '<div class="print-row">';
+      for (let i = 0; i < cols; i++) {
+        if (row[i]) {
+          const styledSvg = applyLineStyle(row[i].svg);
+          html += `<div class="print-cell">${styledSvg}</div>`;
+        } else {
+          html += `<div class="print-cell"></div>`;
+        }
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+
+  printContainer.innerHTML = html;
+  window.print();
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// Init
+init();
+</script>
+</body>
+</html>
