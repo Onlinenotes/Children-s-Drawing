@@ -207,6 +207,12 @@ body {
   border-color: var(--accent-orange);
   box-shadow: 0 3px 12px rgba(255,165,82,0.3);
 }
+.diff-tab.active {
+  background: var(--accent-purple);
+  color: #fff;
+  border-color: var(--accent-purple);
+  box-shadow: 0 3px 12px rgba(155,114,207,0.28);
+}
 
 /* Shape Grid */
 .shape-grid {
@@ -734,7 +740,7 @@ body {
     </div>
   </div>
   <div class="header-actions">
-    <button class="btn-header btn-help" onclick="showToast('如有问题请联系我们：support@miaobimh.com')">💡 使用帮助</button>
+    <button class="btn-header btn-help" onclick="showToast('反馈问题，请添加客服微信：duozhuashumk')">💡 反馈问题</button>
   </div>
 </header>
 
@@ -766,6 +772,7 @@ body {
         选择图形
       </div>
       <div class="category-tabs" id="categoryTabs"></div>
+      <div class="category-tabs" id="difficultyTabs" style="margin-top:-4px;"></div>
       <div class="shape-grid" id="shapeGrid" style="flex:1;"></div>
     </div>
 
@@ -981,11 +988,13 @@ const SHAPES = [
     svg:`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="50" cy="50" r="10" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><circle cx="34" cy="42" r="2" fill="#333"/><circle cx="66" cy="42" r="2" fill="#333"/><circle cx="38" cy="62" r="2" fill="#333"/><circle cx="62" cy="62" r="2" fill="#333"/></svg>` },
   { id:'pizza', name:'披萨', cat:'食物', diff:'medium',
     svg:`<svg viewBox="0 0 100 100"><polygon points="50,10 88,84 12,84" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4 3"/><line x1="22" y1="66" x2="78" y2="66" stroke="#333" stroke-width="1.5" stroke-dasharray="3 2"/><circle cx="50" cy="44" r="4" fill="none" stroke="#333" stroke-width="1.5"/><circle cx="40" cy="58" r="4" fill="none" stroke="#333" stroke-width="1.5"/><circle cx="60" cy="58" r="4" fill="none" stroke="#333" stroke-width="1.5"/></svg>` },
+
 ];
 
 // ===== STATE =====
 let selectedShapes = [];
 let currentCat = '全部';
+let currentDiff = '全部难度';
 let cols = 2;
 let lineStyle = 'dashed';
 let pages = [];
@@ -996,6 +1005,7 @@ const STORAGE_KEY = 'childrenDrawingStateV1';
 function init() {
   loadState();
   renderCategories();
+  renderDifficultyTabs();
   renderShapeGrid();
   renderQueue();
   applySettingsUI();
@@ -1018,15 +1028,44 @@ function renderCategories() {
   ).join('');
 }
 
+function getDifficultyOptions() {
+  return [
+    { value: '全部难度', label: '全部难度' },
+    { value: 'easy', label: '简单' },
+    { value: 'medium', label: '中等' },
+    { value: 'hard', label: '较难' }
+  ];
+}
+
+function renderDifficultyTabs() {
+  const container = document.getElementById('difficultyTabs');
+  const diffs = getDifficultyOptions();
+  container.innerHTML = diffs.map(d =>
+    `<button class="cat-tab diff-tab ${d.value === currentDiff ? 'active' : ''}" onclick="selectDifficulty('${d.value}')">${d.label}</button>`
+  ).join('');
+}
+
 function selectCat(cat) {
   currentCat = cat;
   renderCategories();
   renderShapeGrid();
+  saveState();
+}
+
+function selectDifficulty(diff) {
+  currentDiff = diff;
+  renderDifficultyTabs();
+  renderShapeGrid();
+  saveState();
 }
 
 function renderShapeGrid() {
   const grid = document.getElementById('shapeGrid');
-  const filtered = currentCat === '全部' ? SHAPES : SHAPES.filter(s => s.cat === currentCat);
+  const filtered = SHAPES.filter(s => {
+    const catOk = currentCat === '全部' || s.cat === currentCat;
+    const diffOk = currentDiff === '全部难度' || s.diff === currentDiff;
+    return catOk && diffOk;
+  });
   const diffLabels = { easy: '简单', medium: '中等', hard: '较难' };
   const diffClass = { easy: 'diff-easy', medium: 'diff-medium', hard: 'diff-hard' };
 
@@ -1298,6 +1337,7 @@ function saveState() {
     const payload = {
       selectedIds: selectedShapes.map(s => s.id),
       currentCat,
+
       cols,
       lineStyle,
       customHeader: document.getElementById('customHeader')?.value || ''
@@ -1317,9 +1357,11 @@ function loadState() {
     const validStyles = ['dashed', 'light', 'dots'];
     const validCats = new Set(['全部', ...SHAPES.map(s => s.cat)]);
 
+
     cols = validCols.includes(data.cols) ? data.cols : 2;
     lineStyle = validStyles.includes(data.lineStyle) ? data.lineStyle : 'dashed';
     currentCat = validCats.has(data.currentCat) ? data.currentCat : '全部';
+
 
     const selectedIds = Array.isArray(data.selectedIds) ? data.selectedIds : [];
     selectedShapes = selectedIds
