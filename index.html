@@ -280,8 +280,9 @@ body {
 
 /* Selected Queue */
 .selected-queue {
-  display: flex;
-  flex-wrap: wrap;
+  --queue-cols: 2;
+  display: grid;
+  grid-template-columns: repeat(var(--queue-cols), minmax(0, 1fr));
   gap: 8px;
   min-height: 42px;
   padding: 12px;
@@ -303,14 +304,22 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
+  width: 100%;
+  min-width: 0;
   padding: 6px 10px 6px 6px;
   background: #fff;
-  border-radius: 50px;
+  border-radius: 14px;
   font-size: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   animation: chipIn 0.3s ease;
-  cursor: grab;
   border: 1px solid #f0f0f0;
+}
+.queue-chip > span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 @keyframes chipIn {
   from { transform: scale(0.8); opacity: 0; }
@@ -1103,6 +1112,7 @@ function removeFromQueue(uid) {
 
 function renderQueue() {
   const queue = document.getElementById('selectedQueue');
+  queue.style.setProperty('--queue-cols', String(cols));
   if (selectedShapes.length === 0) {
     queue.innerHTML = '';
     queue.classList.add('empty');
@@ -1123,6 +1133,7 @@ function setCols(n) {
   document.querySelectorAll('.col-btn').forEach(b => {
     b.classList.toggle('active', parseInt(b.dataset.cols) === n);
   });
+  renderQueue();
   updateStats();
   saveState();
   updatePreview();
@@ -1337,7 +1348,6 @@ function saveState() {
     const payload = {
       selectedIds: selectedShapes.map(s => s.id),
       currentCat,
-
       cols,
       lineStyle,
       customHeader: document.getElementById('customHeader')?.value || ''
@@ -1356,13 +1366,9 @@ function loadState() {
     const validCols = [1, 2, 3];
     const validStyles = ['dashed', 'light', 'dots'];
     const validCats = new Set(['全部', ...SHAPES.map(s => s.cat)]);
-
-
     cols = validCols.includes(data.cols) ? data.cols : 2;
     lineStyle = validStyles.includes(data.lineStyle) ? data.lineStyle : 'dashed';
     currentCat = validCats.has(data.currentCat) ? data.currentCat : '全部';
-
-
     const selectedIds = Array.isArray(data.selectedIds) ? data.selectedIds : [];
     selectedShapes = selectedIds
       .map(id => SHAPES.find(s => s.id === id))
